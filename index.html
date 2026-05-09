@@ -1,43 +1,71 @@
 <!DOCTYPE html>
-<html>
+<div id="recentSection">
+  <h2>Jump Back In</h2>
+  <div id="recentGrid"></div>
+</div>
+<html lang="en">
 <head>
-<title>Dashboard</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nypex</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
+<header>
+  <h1>Nypex</h1>
+</header>
+
 <div class="topbar">
-  <div class="logo">Dashboard</div>
-
-  <div class="tabs">
-    <button onclick="showTab('games')">Games</button>
-    <button onclick="showTab('apps')">Apps</button>
-  </div>
-</div>
-
-<div class="searchbar">
-  <input id="search" placeholder="Search games..." oninput="renderGames()">
+  <button onclick="showTab('games')">Games</button>
+  <button onclick="showTab('apps')">Apps</button>
+  <button onclick="showTab('browser')">Browser</button>
 </div>
 
 <!-- GAMES -->
 <div id="gamesTab">
+
+  <input id="search" placeholder="Search games..." oninput="renderGames()">
+
   <div id="featured"></div>
   <div id="grid"></div>
+
 </div>
 
 <!-- APPS -->
 <div id="appsTab" style="display:none">
 
   <div class="apps-grid">
-
     <div class="app" onclick="window.open('https://www.youtube.com','_blank')">YouTube</div>
     <div class="app" onclick="window.open('https://www.tiktok.com','_blank')">TikTok</div>
     <div class="app" onclick="window.open('https://play.geforcenow.com','_blank')">GeForce NOW</div>
     <div class="app" onclick="window.open('https://www.snapchat.com','_blank')">Snapchat</div>
     <div class="app" onclick="window.open('https://www.crunchyroll.com','_blank')">Crunchyroll</div>
     <div class="app" onclick="window.open('https://tubitv.com','_blank')">Tubi</div>
-
   </div>
 
 </div>
+
+<!-- BROWSER -->
+<div id="browserTab" style="display:none">
+
+  <div class="browser-bar">
+    <input id="browserInput" placeholder="Search DuckDuckGo...">
+    <button onclick="duckSearch()">Search</button>
+  </div>
+
+  <iframe id="browserFrame"></iframe>
+
+</div>
+
+<!-- GAME FRAME -->
+<iframe id="frame"></iframe>
+
+<script src="games.js"></script>
+<script src="app.js"></script>
+<div class="footer-credit">
+ This site was made by therealkiau, NOZTONE, and agent og. We hold no responsability if you get in any trouble while on this site.
+</div>
+</body>
+</html>
