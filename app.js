@@ -1,53 +1,104 @@
-window.onload = () => {
-setTimeout(() => {
-document.getElementById("loader").style.display = "none";
-}, 600);
-};
-let category = "all";
+let gamesCache = [];
 
-function renderGames(){
-const grid = document.getElementById("grid");
-const featured = document.getElementById("featured");
-const search = document.getElementById("search").value.toLowerCase();
+document.addEventListener("DOMContentLoaded", () => {
+  gamesCache = typeof games !== "undefined" ? games : [];
 
-grid.innerHTML = "";
-featured.innerHTML = "";
-
-// filter system
-let filtered = games
-.filter(g => category === "all" || g.cat === category)
-.filter(g => g.name.toLowerCase().includes(search));
-
-// featured (first 6)
-filtered.slice(0,6).forEach(g=>{
-featured.innerHTML += createCard(g);
+  renderGames();
+  renderRecent();
 });
 
-// all games
-filtered.forEach(g=>{
-grid.innerHTML += createCard(g);
-});
+/* ---------------- TABS ---------------- */
+function showTab(tab) {
+  document.getElementById("gamesTab").style.display = "none";
+  document.getElementById("appsTab").style.display = "none";
+  document.getElementById("browserTab").style.display = "none";
 
+  document.getElementById(tab + "Tab").style.display = "block";
 }
 
-function createCard(g){
-return `
-<div class="card" onclick="play('${g.url}')">
-<img src="https://www.google.com/s2/favicons?sz=128&domain=${new URL(g.url).hostname}">
-<div>${g.name}</div>
-</div>
-`;
+/* ---------------- GAMES ---------------- */
+function renderGames() {
+  const grid = document.getElementById("grid");
+  const search = document.getElementById("search");
+
+  if (!grid) return;
+
+  const q = search ? search.value.toLowerCase() : "";
+
+  grid.innerHTML = "";
+
+  gamesCache
+    .filter(g => g.name.toLowerCase().includes(q))
+    .forEach(g => {
+
+      const card = document.createElement("div");
+      card.className = "card";
+
+      card.innerHTML = `
+        <div>${g.name}</div>
+        <small>Click to play</small>
+      `;
+
+      card.onclick = () => {
+        saveRecent(g);
+
+        const frame = document.getElementById("frame");
+        if (frame) {
+          frame.style.display = "block";
+          frame.src = g.url;
+        }
+      };
+
+      grid.appendChild(card);
+    });
 }
 
-function setCat(c){
-category = c;
-renderGames();
+/* ---------------- RECENT (JUMP BACK IN) ---------------- */
+function saveRecent(game) {
+  let recent = JSON.parse(localStorage.getItem("recent") || "[]");
+
+  recent = recent.filter(g => g.name !== game.name);
+  recent.unshift(game);
+
+  recent = recent.slice(0, 8);
+
+  localStorage.setItem("recent", JSON.stringify(recent));
+
+  renderRecent();
 }
 
-function play(url){
-const frame = document.getElementById("frame");
-frame.src = url;
-frame.style.display = "block";
+function renderRecent() {
+  const container = document.getElementById("recentGrid");
+  if (!container) return;
+
+  const recent = JSON.parse(localStorage.getItem("recent") || "[]");
+
+  container.innerHTML = "";
+
+  recent.forEach(g => {
+    const div = document.createElement("div");
+    div.className = "card";
+    div.textContent = g.name;
+
+    div.onclick = () => {
+      const frame = document.getElementById("frame");
+      if (frame) {
+        frame.style.display = "block";
+        frame.src = g.url;
+      }
+    };
+
+    container.appendChild(div);
+  });
 }
 
-renderGames();
+/* ---------------- BROWSER ---------------- */
+function duckSearch() {
+  const input = document.getElementById("browserInput");
+  const frame = document.getElementById("browserFrame");
+
+  if (!input || !frame) return;
+
+  frame.style.display = "block";
+  frame.src = "https://duckduckgo.com/?q=" + encodeURIComponent(input.value);
+}
